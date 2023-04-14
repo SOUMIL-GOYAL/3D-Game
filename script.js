@@ -1,4 +1,122 @@
-var scene;
+var canvas = document.getElementById("renderCanvas");
+
+var startRenderLoop = function (engine, canvas) {
+  engine.runRenderLoop(function () {
+    if (sceneToRender && sceneToRender.activeCamera) {
+      sceneToRender.render();
+    }
+  });
+};
+
+var engine = null;
+var scene = null;
+var sceneToRender = null;
+var createDefaultEngine = function () {
+  return new BABYLON.Engine(canvas, true, {
+    preserveDrawingBuffer: true,
+    stencil: true,
+    disableWebGL2Support: false,
+  });
+};
+
+const createScene = function () {
+  const scene = new BABYLON.Scene(engine);
+
+  const camera = new BABYLON.FreeCamera(
+    "camera",
+    new BABYLON.Vector3(0, 40, 0),
+    scene
+  );
+  camera.attachControl();
+
+  camera.applyGravity = true;
+  camera.checkCollisions = true;
+
+  camera.ellipsoid = new BABYLON.Vector3(5, 5, 5);
+
+  camera.minZ = 0.45;
+  camera.speed = 0.75;
+  camera.angularSensibility = 4000;
+
+  camera.keysUp.push(87);
+  camera.keysLeft.push(65);
+  camera.keysDown.push(83);
+  camera.keysRight.push(68);
+
+  camera.attachControl(canvas, true);
+  const light = new BABYLON.HemisphericLight(
+    "light",
+    new BABYLON.Vector3(1, 1, 0)
+  );
+
+  async function makeenv () {
+    const { meshes } = await BABYLON.SceneLoader.ImportMeshAsync(
+      "",
+      "/3D-Game/",
+      "cubeplane.glb"
+    );
+
+    meshes.map((mesh) => {
+      mesh.checkCollisions = true;
+    });
+  }
+
+  scene.onPointerDown = (evt) => {
+    if (evt.button === 0) engine.enterPointerlock();
+    if (evt.button === 1) engine.exitPointerlock();
+  };
+
+  const framesPerSecond = 60;
+  const gravity = -9.81;
+  scene.gravity = new BABYLON.Vector3(0, gravity / framesPerSecond, 0);
+  scene.collisionsEnabled = true;
+
+  return scene;
+};
+
+window.initFunction = async function () {
+  var asyncEngineCreation = async function () {
+    try {
+      return createDefaultEngine();
+    } catch (e) {
+      console.log(
+        "the available createEngine function failed. Creating the default engine instead"
+      );
+      return createDefaultEngine();
+    }
+  };
+
+  window.engine = await asyncEngineCreation();
+  if (!engine) throw "engine should not be null.";
+  startRenderLoop(engine, canvas);
+  
+  
+
+
+  window.scene = createScene();
+  
+  const { meshes } = await BABYLON.SceneLoader.ImportMeshAsync(
+    "",
+    "/3D-Game/",
+    "cubeplane.glb", 
+    scene
+  );
+
+  meshes.map((mesh) => {
+    mesh.checkCollisions = true;
+  });
+};
+
+initFunction().then(() => {
+  sceneToRender = scene;
+});
+
+// Resize
+window.addEventListener("resize", function () {
+  engine.resize();
+});
+
+/*var scene;
 var engine;
 
 function constructor(canvas) {
@@ -65,8 +183,7 @@ function CreateController() {
 
 
 constructor(document.getElementById("renderCanvas"));
-
-
+*/
 
 /*const canvas = document.getElementById("renderCanvas"); // Get the canvas element
 const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
