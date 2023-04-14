@@ -34,8 +34,8 @@ function CreateScene() {
 async function CreateEnvironment() {
   const { meshes } = await BABYLON.SceneLoader.ImportMeshAsync(
     "",
-    "",
-    "Prototype_Level.glb",
+    "https://assets.babylonjs.com/meshes/",
+    "both_houses_scene.babylon",
     scene
   );
 
