@@ -94,6 +94,7 @@ window.initFunction = async function () {
       newMeshes[0].rotation.x = -Math.PI / 2;
       newMeshes[0].checkCollisions = true;
       console.log(newMeshes[0]);
+      newMeshes.map((mesh) => {mesh.checkCollisions = true;});
     }
   );
   
