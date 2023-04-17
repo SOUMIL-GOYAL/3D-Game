@@ -29,8 +29,7 @@ const createScene = function () {
   );
   camera.attachControl();
 
-  camera.applyGravity = true;
-  camera.checkCollisions = true;
+
 
   camera.ellipsoid = new BABYLON.Vector3(2, 2, 2);
 
@@ -53,10 +52,12 @@ const createScene = function () {
     if (evt.button === 1) engine.exitPointerlock();
   };
 
-  const framesPerSecond = 60;
-  const gravity = -9.81;
-  scene.gravity = new BABYLON.Vector3(0, gravity / framesPerSecond, 0);
+  scene.enablePhysics(BABYLON.Vector3(0, -9.81, 0), new BABYLON.CannonJSPlugin());
   scene.collisionsEnabled = true;
+
+
+  camera.applyGravity = true;
+  camera.checkCollisions = true;
 
   return scene;
 };
@@ -85,7 +86,7 @@ window.initFunction = async function () {
   const { meshes} = BABYLON.SceneLoader.ImportMesh(
     "",
     "/3D-Game/",
-    "basicmap.babylon",
+    "cubeplane1.glb",
     scene,
     (newMeshes) => {
       newMeshes[0].rotationQuaternion = null;
