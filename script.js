@@ -24,7 +24,7 @@ const createScene = function () {
 
   const camera = new BABYLON.FreeCamera(
     "camera",
-    new BABYLON.Vector3(0, 40, 0),
+    new BABYLON.Vector3(0, 700, 0),
     scene
   );
   camera.attachControl();
@@ -32,10 +32,10 @@ const createScene = function () {
   camera.applyGravity = true;
   camera.checkCollisions = true;
 
-  camera.ellipsoid = new BABYLON.Vector3(5, 5, 5);
+  camera.ellipsoid = new BABYLON.Vector3(2, 2, 2);
 
   camera.minZ = 0.45;
-  camera.speed = 0.75;
+  camera.speed = 5;
   camera.angularSensibility = 4000;
 
   camera.keysUp.push(87);
@@ -46,21 +46,8 @@ const createScene = function () {
   camera.attachControl(canvas, true);
   const light = new BABYLON.HemisphericLight(
     "light",
-    new BABYLON.Vector3(1, 1, 0)
+    new BABYLON.Vector3(3, 1, 0)
   );
-
-  async function makeenv () {
-    const { meshes } = await BABYLON.SceneLoader.ImportMeshAsync(
-      "",
-      "/3D-Game/",
-      "cubeplane.glb"
-    );
-
-    meshes.map((mesh) => {
-      mesh.checkCollisions = true;
-    });
-  }
-
   scene.onPointerDown = (evt) => {
     if (evt.button === 0) engine.enterPointerlock();
     if (evt.button === 1) engine.exitPointerlock();
@@ -95,16 +82,21 @@ window.initFunction = async function () {
 
   window.scene = createScene();
   
-  const { meshes } = await BABYLON.SceneLoader.ImportMeshAsync(
+  const { meshes} = BABYLON.SceneLoader.ImportMesh(
     "",
     "/3D-Game/",
-    "cubeplane.glb", 
-    scene
+    "basicmap.babylon",
+    scene,
+    (newMeshes) => {
+      newMeshes[0].rotationQuaternion = null;
+      newMeshes[0].rotation.y = Math.PI / 2;
+      newMeshes[0].rotation.z = Math.PI/2;
+      newMeshes[0].rotation.x = -Math.PI / 2;
+      newMeshes[0].checkCollisions = true;
+      console.log(newMeshes[0]);
+    }
   );
-
-  meshes.map((mesh) => {
-    mesh.checkCollisions = true;
-  });
+  
 };
 
 initFunction().then(() => {
@@ -185,18 +177,43 @@ function CreateController() {
 constructor(document.getElementById("renderCanvas"));
 */
 
-/*const canvas = document.getElementById("renderCanvas"); // Get the canvas element
+
+/*
+
+const canvas = document.getElementById("renderCanvas"); // Get the canvas element
 const engine = new BABYLON.Engine(canvas, true); // Generate the BABYLON 3D engine
+var meshes;
 
 // Add your code here matching the playground format
 const createScene = function () {
   const scene = new BABYLON.Scene(engine);
 
-  BABYLON.MeshBuilder.CreateBox("box", {});
+  BABYLON.SceneLoader.ImportMesh(
+    "",
+    "/3D-Game/",
+    "basicmap.babylon",
+    scene,
+    (newMeshes) => {
+      newMeshes[0].rotationQuaternion = null;
+      newMeshes[0].rotation.y = Math.PI / 2;
+      newMeshes[0].rotation.z = Math.PI/2;
+      newMeshes[0].rotation.x = -Math.PI / 2;
 
-  const camera = new BABYLON.ArcRotateCamera("camera", -Math.PI / 2, Math.PI / 2.5, 15, new BABYLON.Vector3(0, 0, 0));
+    }
+  );
+
+  const camera = new BABYLON.ArcRotateCamera(
+    "camera",
+    -Math.PI / 2,
+    Math.PI / 2.5,
+    15,
+    new BABYLON.Vector3(0, 0, 0)
+  );
   camera.attachControl(canvas, true);
-  const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(1, 1, 0));
+  const light = new BABYLON.HemisphericLight(
+    "light",
+    new BABYLON.Vector3(1, 1, 0)
+  );
 
   return scene;
 };
@@ -211,4 +228,7 @@ engine.runRenderLoop(function () {
 // Watch for browser/canvas resize events
 window.addEventListener("resize", function () {
   engine.resize();
-});*/
+});
+
+
+*/
