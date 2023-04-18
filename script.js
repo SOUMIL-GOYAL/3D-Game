@@ -1,4 +1,18 @@
-var canvas = document.getElementById("renderCanvas");
+
+function include(file) {
+      
+  var script = document.createElement('script');
+  script.src = file;
+  script.type = 'text/javascript';
+  script.defer = true;
+    
+  document.getElementsByTagName('head').item(0).appendChild(script);
+    
+  }
+
+include("./scripts/lert.js")
+
+const canvas = document.getElementById("renderCanvas");
 
 var startRenderLoop = function (engine, canvas) {
   engine.runRenderLoop(function () {
@@ -31,7 +45,7 @@ const createScene = function () {
 
 
 
-  camera.ellipsoid = new BABYLON.Vector3(2, 2, 2);
+  camera.ellipsoid = new BABYLON.Vector3(20, 20, 20);
 
   camera.minZ = 0.45;
   camera.speed = 5;
@@ -85,7 +99,7 @@ window.initFunction = async function () {
   
   const { meshes} = BABYLON.SceneLoader.ImportMesh(
     "",
-    "/3D-Game/",
+    "/3D-Game/models/",
     "cubeplane1.glb",
     scene,
     (newMeshes) => {
