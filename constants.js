@@ -1,15 +1,32 @@
 const CAMERACONSTANTS = {
-  HEIGHT: 100,
-  WIDTH: 20,
-  LENGHT: 20,
+    STARTINGPOSITION: new BABYLON.Vector3(0, 400, 400),
+    ELIPSOIDDIMENSIONS: new BABYLON.Vector3(20, 100, 20),
+    MINZ: .45,
+    SPEED: 15,
+    ANGULARSENSIBILITY: 2000,
+
 };
 
 const MESHCONSTANTS = {
     PATHTOFOLDER:"./models/",
     MESHNAME: "cubeplane1.glb",
+    MAPROTATIONX: -Math.PI / 2,
+    MAPROTATIONY: Math.PI / 2,
+    MAPROTATIONZ: Math.PI / 2,
 };
 
+const LIGHTCONSTANTS = {
+    LIGHTPOSITION : new BABYLON.Vector3(3, 1, 0),
+}
+
+const PHYSICSCONSTANTS = {
+    GRAVITYVECTOR: new BABYLON.Vector3(0, -9.81, 0),
+}
+
 export default {
-  CAMERACONSTANTS,
+    CAMERACONSTANTS,
     MESHCONSTANTS,
+    LIGHTCONSTANTS,
+    PHYSICSCONSTANTS,
+
 };

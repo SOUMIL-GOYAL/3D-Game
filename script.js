@@ -18,7 +18,6 @@ var scene = null;
 var sceneToRender = null;
 
 function createDefaultEngine() {
-  console.log("yoyoyo");
   return (new BABYLON.Engine(canvas, true, {
     preserveDrawingBuffer: true,
     stencil: true,
@@ -30,16 +29,16 @@ function createScene() {
   const scene = new BABYLON.Scene(engine);
   const camera = new BABYLON.FreeCamera(
     "camera",
-    new BABYLON.Vector3(0, 700, 0),
+    constants.CAMERACONSTANTS.STARTINGPOSITION,
     scene
   );
   camera.attachControl();
 
-  camera.ellipsoid = new BABYLON.Vector3(2, 2, 2);
+  camera.ellipsoid = constants.CAMERACONSTANTS.ELIPSOIDDIMENSIONS;
 
-  camera.minZ = 0.45;
-  camera.speed = 5;
-  camera.angularSensibility = 4000;
+  camera.minZ = constants.CAMERACONSTANTS.MINZ;
+  camera.speed = constants.CAMERACONSTANTS.SPEED;
+  camera.angularSensibility = constants.CAMERACONSTANTS.ANGULARSENSIBILITY;
   camera.keysUp.push(87);
   camera.keysLeft.push(65);
   camera.keysDown.push(83);
@@ -47,7 +46,7 @@ function createScene() {
   camera.attachControl(canvas, true);
   const light = new BABYLON.HemisphericLight(
     "light",
-    new BABYLON.Vector3(3, 1, 0)
+    constants.LIGHTCONSTANTS.LIGHTPOSITION,
   );
   scene.onPointerDown = (evt) => {
     if (evt.button === 0) engine.enterPointerlock();
@@ -55,7 +54,7 @@ function createScene() {
   };
 
   scene.enablePhysics(
-    BABYLON.Vector3(0, -9.81, 0),
+    constants.PHYSICSCONSTANTS.GRAVITYVECTOR,
     new BABYLON.CannonJSPlugin()
   );
   scene.collisionsEnabled = true;
@@ -89,14 +88,16 @@ async function initFunction() {
 
   const { meshes } = BABYLON.SceneLoader.ImportMesh(
     "",
-    "./models/",
-    "cubeplane1.glb",
+    constants.MESHCONSTANTS.PATHTOFOLDER,
+    constants.MESHCONSTANTS.MESHNAME,
     scene,
     (newMeshes) => {
       newMeshes[0].rotationQuaternion = null;
-      newMeshes[0].rotation.y = Math.PI / 2;
-      newMeshes[0].rotation.z = Math.PI / 2;
-      newMeshes[0].rotation.x = -Math.PI / 2;
+
+      newMeshes[0].rotation.x = constants.MESHCONSTANTS.MAPROTATIONX;
+      newMeshes[0].rotation.y = constants.MESHCONSTANTS.MAPROTATIONY;
+      newMeshes[0].rotation.z = constants.MESHCONSTANTS.MAPROTATIONZ;
+      
       newMeshes[0].checkCollisions = true;
       console.log(newMeshes[0]);
       newMeshes.map((mesh) => {
