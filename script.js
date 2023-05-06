@@ -1,5 +1,5 @@
 import constants from './constants.js';
-
+var  camera;
 
 console.log(constants);
 
@@ -27,7 +27,7 @@ function createDefaultEngine() {
 
 function createScene() {
   const scene = new BABYLON.Scene(engine);
-  const camera = new BABYLON.FreeCamera(
+  camera = new BABYLON.FreeCamera(
     "camera",
     constants.CAMERACONSTANTS.STARTINGPOSITION,
     scene
@@ -47,7 +47,7 @@ function createScene() {
   const light = new BABYLON.HemisphericLight(
     "light",
     constants.LIGHTCONSTANTS.LIGHTPOSITION,
-  );
+  );  ''
   scene.onPointerDown = (evt) => {
     if (evt.button === 0) engine.enterPointerlock();
     if (evt.button === 1) engine.exitPointerlock();
@@ -105,7 +105,44 @@ async function initFunction() {
       });
     }
   );
+
+  
 }
+
+function shoot () {
+  const sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 80, segments: 32}, scene);
+  sphere.position = camera.position;
+  sphere.checkCollisions = true;
+
+  sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere, BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0.9 }, scene);
+
+  var forceDirection = camera.getDirection(BABYLON.Vector3.Forward());
+
+  sphere.physicsImpostor.applyImpulse(forceDirection.scale(100), sphere.getAbsolutePosition());
+
+  /*
+  const sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 80, segments: 32}, scene);
+  const cameraposition = camera.position;
+  console.log(cameraposition);
+  console.log(cameraposition.z);
+  sphere.position = BABYLON.Vector3(cameraposition.x, cameraposition.y, cameraposition.z + 5);
+  sphere.checkCollisions = true;
+
+  sphere.physicsImpostor = BABYLON.PhysicsImpostor(sphere, BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0.9 }, scene);
+
+  var forceDirection = camera.getDirection(BABYLON.Vector3.Forward());
+
+  sphere.physicsImpostor.applyImpulse(forceDirection.scale(100), sphere.getAbsolutePosition());
+  */
+}
+
+document.addEventListener("keypress", function onEvent(event) {
+  if (event.key === " ") {
+      shoot();
+  }
+});
+
+
 initFunction().then(() => {
   sceneToRender = scene;
 });
@@ -113,3 +150,5 @@ initFunction().then(() => {
 window.addEventListener("resize", function () {
   engine.resize();
 });
+
+
