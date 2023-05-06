@@ -110,21 +110,19 @@ async function initFunction() {
 }
 
 function shoot () {
-  const sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: 80, segments: 32}, scene);
   const cameraposition = camera.position;
-  const cameradirection = camera.getDirection(BABYLON.Vector3.Forward())
-  sphere.position.x = cameraposition.x + cameradirection.x*300;
+  const cameradirection = camera.getDirection(BABYLON.Vector3.Forward());
+
+  const sphere = BABYLON.MeshBuilder.CreateSphere("sphere", {diameter: constants.BULLETCONSTANTS.DIAMETER, segments: constants.BULLETCONSTANTS.SEGMENTS}, scene);
+  sphere.position.x = cameraposition.x + cameradirection.x*constants.BULLETCONSTANTS.DISTANCEAHEAD;
   sphere.position.y = cameraposition.y;
-  sphere.position.z = cameraposition.z + cameradirection.z*300;
+  sphere.position.z = cameraposition.z + cameradirection.z*constants.BULLETCONSTANTS.DISTANCEAHEAD;
+
   sphere.checkCollisions = true;
 
-  sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere, BABYLON.PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0.9 }, scene);
+  sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere, BABYLON.PhysicsImpostor.SphereImpostor, { mass: constants.BULLETCONSTANTS.MASS, restitution: constants.BULLETCONSTANTS.RESTITUTION}, scene);
+  sphere.physicsImpostor.applyImpulse(cameradirection.scale(constants.BULLETCONSTANTS.FORCESCALE), sphere.getAbsolutePosition());
 
-  var forceDirection = camera.getDirection(BABYLON.Vector3.Forward());
-
-  sphere.physicsImpostor.applyImpulse(forceDirection.scale(1000), sphere.getAbsolutePosition());
-
-  console.log(camera.getDirection(BABYLON.Vector3.Forward()));
 }
 
 document.addEventListener("keypress", function onEvent(event) {
