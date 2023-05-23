@@ -24,13 +24,22 @@ const PHYSICSCONSTANTS = {
 }
 
 const BULLETCONSTANTS = {
-    DIAMETER: 20,
+    DIAMETER: 2,
     SEGMENTS: 32,
     DISTANCEAHEAD: 50,
     MASS: 1,
     RESTITUTION: .9,
     FORCESCALE: 1000,
+    RANDOMFACTOR: .04,
+    
 
+}
+
+const SPAWNCONSTANTS = {
+    DIAMETER: 200,
+    SEGMENTS: 32,
+    MASS: 0,
+    RESTITUTION: .9,
 }
 
 export default {
@@ -39,5 +48,6 @@ export default {
     LIGHTCONSTANTS,
     PHYSICSCONSTANTS,
     BULLETCONSTANTS,
+    SPAWNCONSTANTS,
 
 };

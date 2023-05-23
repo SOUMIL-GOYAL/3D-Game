@@ -68,6 +68,8 @@ function createScene() {
   var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI", true, scene);
   var loadedGUI = advancedTexture.parseFromURLAsync("guiTexture.json");
 
+  //scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
+  //scene.fogDensity = 0.0001;
   return scene;
 }
 
@@ -126,8 +128,35 @@ function shoot () {
 
   sphere.checkCollisions = true;
 
+  //console.log(cameradirection);
+
+  cameradirection.x += (Math.random() - Math.random()) * constants.BULLETCONSTANTS.RANDOMFACTOR;
+  cameradirection.y += (Math.random() - Math.random()) * constants.BULLETCONSTANTS.RANDOMFACTOR;
+  cameradirection.z += (Math.random() - Math.random()) * constants.BULLETCONSTANTS.RANDOMFACTOR;
+
+  //console.log(cameradirection);
+
   sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere, BABYLON.PhysicsImpostor.SphereImpostor, { mass: constants.BULLETCONSTANTS.MASS, restitution: constants.BULLETCONSTANTS.RESTITUTION}, scene);
   sphere.physicsImpostor.applyImpulse(cameradirection.scale(constants.BULLETCONSTANTS.FORCESCALE), sphere.getAbsolutePosition());
+  
+  /*
+  var ray = camera.getForwardRay(100000);
+  console.log(ray);
+  ray.direction.x += (Math.random - Math.random) * .03;
+  ray.direction.y += (Math.random - Math.random) * .03;
+  ray.direction.z += (Math.random - Math.random) * .03;
+  var hit = scene.pickWithRay(ray);
+
+  console.log(ray);
+  console.log(hit.pickedMesh);
+  console.log(targets.indexOf(hit.pickedMesh));
+  
+  if (targets.indexOf(hit.pickedMesh) >= 0) {
+    hit.pickedMesh.dispose();
+    targets = targets.filter(i => i != hit.pickedMesh);
+  }
+  */
+
   addaction(sphere);
 }
 
@@ -141,8 +170,12 @@ function addaction(sphere) {
               parameter: target,
           },
           (event) => {
-            target.dispose();
-            targets = targets.filter(i => i != target);
+            //if (BABYLON.Vector3.Distance(sphere.position, target.position) <= constants.SPAWNCONSTANTS.DIAMETER/2 + constants.BULLETCONSTANTS.DIAMETER/2) {
+              console.log("colllision");
+              target.dispose();
+              targets = targets.filter(i => i != target);
+            //}
+            
           }
       )
     );
@@ -153,11 +186,13 @@ function addaction(sphere) {
 function spawntarget () {
   const spawnposition = new BABYLON.Vector3(0, 400, 400);
 
-  const sphere = BABYLON.MeshBuilder.CreateSphere("target", {diameter: 400, segments: 32}, scene);
+  const sphere = BABYLON.MeshBuilder.CreateSphere("target", {diameter: constants.SPAWNCONSTANTS.DIAMETER, segments: constants.SPAWNCONSTANTS.SEGMENTS}, scene);
   sphere.position = spawnposition;
   sphere.checkCollisions = true;
-
-  sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere, BABYLON.PhysicsImpostor.SphereImpostor, { mass: 0, restitution: 0.9}, scene);
+  sphere._boundingInfo.boundingSphere.radius = constants.SPAWNCONSTANTS.DIAMETER/2;
+  sphere._boundingInfo.boundingSphere.worldRadius = constants.SPAWNCONSTANTS.DIAMETER/2;
+  console.log(sphere._boundingInfo.boundingSphere.radius);
+  sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere, BABYLON.PhysicsImpostor.SphereImpostor, { mass: constants.SPAWNCONSTANTS.MASS, restitution: constants.SPAWNCONSTANTS.RESTITUTION}, scene);
 
   targets.push(sphere);
 
