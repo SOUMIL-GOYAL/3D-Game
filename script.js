@@ -8,6 +8,7 @@ var totalscore = 1000;
 var addedobservable = false;
 var targetcount = 0;
 var win = 15;
+var timeminus = 1;
 
 console.log(constants);
 
@@ -72,7 +73,7 @@ function createScene() {
           } else {
             
             if (Date.now() - previoustime >= 1000) {
-              totalscore--;
+              totalscore -= timeminus;
               previoustime = Date.now();
             }
             if (totalscore <= 0) {
@@ -185,7 +186,7 @@ function shoot () {
   
 
   if (targetcount < win) {
-    totalscore -= 10;
+    totalscore -= 40;
   }
   
   /*
@@ -256,6 +257,10 @@ function addaction(sphere) {
 function spawntarget () {
   var spawnposition = constants.SPAWNCONSTANTS.POSSIBLELOCATIONS[Math.floor(constants.SPAWNCONSTANTS.POSSIBLELOCATIONS.length*Math.random())] ;
 
+  spawnposition.x += (Math.random() - Math.random()) * 200;
+  spawnposition.y += (Math.random() - Math.random()) * 200;
+  spawnposition.z += (Math.random() - Math.random()) * 200;
+
   const sphere = BABYLON.MeshBuilder.CreateSphere("target", {diameter: constants.SPAWNCONSTANTS.DIAMETER, segments: constants.SPAWNCONSTANTS.SEGMENTS}, scene);
   sphere.position = spawnposition;
   sphere.checkCollisions = true;
@@ -263,6 +268,10 @@ function spawntarget () {
   sphere._boundingInfo.boundingSphere.worldRadius = constants.SPAWNCONSTANTS.DIAMETER/2;
   //console.log(sphere._boundingInfo.boundingSphere.radius);
   sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere, BABYLON.PhysicsImpostor.SphereImpostor, { mass: constants.SPAWNCONSTANTS.MASS, restitution: constants.SPAWNCONSTANTS.RESTITUTION}, scene);
+
+  var looks = new BABYLON.StandardMaterial("looks");
+  looks.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
+  sphere.material = looks;
 
   targets.push(sphere);
 
