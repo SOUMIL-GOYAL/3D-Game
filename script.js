@@ -1,6 +1,13 @@
 import constants from './constants.js';
 var  camera;
 var targets = [];
+var scene;
+var advancedTexture;
+var previoustime = 0;
+var totalscore = 1000;
+var addedobservable = false;
+var targetcount = 0;
+var win = 10;
 
 console.log(constants);
 
@@ -28,8 +35,10 @@ function createDefaultEngine() {
   }));
 }
 
+
+
 function createScene() {
-  const scene = new BABYLON.Scene(engine);
+  scene = new BABYLON.Scene(engine);
   camera = new BABYLON.FreeCamera(
     "camera",
     constants.CAMERACONSTANTS.STARTINGPOSITION,
@@ -52,7 +61,30 @@ function createScene() {
     constants.LIGHTCONSTANTS.LIGHTPOSITION,
   );  ''
   scene.onPointerDown = (evt) => {
-    if (evt.button === 0) engine.enterPointerlock();
+    if (evt.button === 0){
+      engine.enterPointerlock();
+      if (addedobservable == false) {
+        scene.onBeforeRenderObservable.add(function () {
+          
+          if (targetcount >= win) {
+            advancedTexture.getControlByName("scoretext").text = "YOU COMPLETED THE TASKS! YOUR SCORE WAS:" + totalscore;
+          } else {
+            
+            if (Date.now() - previoustime >= 1000) {
+              totalscore--;
+              previoustime = Date.now();
+            }
+            if (totalscore <= 0) {
+              totalscore = 0;
+            }
+            advancedTexture.getControlByName("scoretext").text = "SCORE:" + totalscore;
+          }
+          
+        });
+        addedobservable = true;
+      }
+      
+    } 
     if (evt.button === 1) engine.exitPointerlock();
   };
 
@@ -65,18 +97,26 @@ function createScene() {
   camera.applyGravity = true;
   camera.checkCollisions = true;
 
-  var advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI", true, scene);
-  var loadedGUI = advancedTexture.parseFromURLAsync("guiTexture.json");
+  advancedTexture = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("GUI", true, scene);
+  var loadedGUI = advancedTexture.parseFromURLAsync("guiTexture2.json");
+
+  //console.log(advancedTexture);
+  //console.log(advancedTexture.getControlByName("scoretext"));
+  
+
+
 
   //scene.fogMode = BABYLON.Scene.FOGMODE_EXP;
   //scene.fogDensity = 0.0001;
   return scene;
 }
 
+
+
 function asyncEngineCreation() {
   try {
     var thing = createDefaultEngine();
-    console.log(thing);
+    //console.log(thing);
     return thing;
 
   } catch (e) {
@@ -94,7 +134,7 @@ async function initFunction() {
 
   scene = createScene();
 
-  const { meshes } = BABYLON.SceneLoader.ImportMesh(
+  const meshes = BABYLON.SceneLoader.ImportMesh(
     "",
     constants.MESHCONSTANTS.PATHTOFOLDER,
     constants.MESHCONSTANTS.MESHNAME,
@@ -107,12 +147,15 @@ async function initFunction() {
       newMeshes[0].rotation.z = constants.MESHCONSTANTS.MAPROTATIONZ;
       
       newMeshes[0].checkCollisions = true;
+      //newMeshes[0].physicsImpostor = new BABYLON.PhysicsImpostor(newMeshes[0], BABYLON.PhysicsImpostor.MeshImpostor, { mass: 0, restitution: .9}, scene);
+
       console.log(newMeshes[0]);
       newMeshes.map((mesh) => {
         mesh.checkCollisions = true;
       });
     }
   );
+
 
   
 }
@@ -139,6 +182,11 @@ function shoot () {
   sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere, BABYLON.PhysicsImpostor.SphereImpostor, { mass: constants.BULLETCONSTANTS.MASS, restitution: constants.BULLETCONSTANTS.RESTITUTION}, scene);
   sphere.physicsImpostor.applyImpulse(cameradirection.scale(constants.BULLETCONSTANTS.FORCESCALE), sphere.getAbsolutePosition());
   
+
+  if (targetcount < win) {
+    totalscore -= 10;
+  }
+  
   /*
   var ray = camera.getForwardRay(100000);
   console.log(ray);
@@ -161,8 +209,9 @@ function shoot () {
 }
 
 function addaction(sphere) {
+  sphere.actionManager = new BABYLON.ActionManager();
   targets.forEach(function(target) {
-    sphere.actionManager = new BABYLON.ActionManager();
+    
     sphere.actionManager.registerAction(
       new BABYLON.ExecuteCodeAction(
           {
@@ -174,24 +223,44 @@ function addaction(sphere) {
               console.log("colllision");
               target.dispose();
               targets = targets.filter(i => i != target);
+              targetcount++;
+              spawntarget();
             //}
             
           }
       )
     );
   });
+  /*
+  sphere.actionManager.registerAction(
+    new BABYLON.ExecuteCodeAction(
+        {
+            trigger: BABYLON.ActionManager.OnIntersectionEnterTrigger,
+            parameter: scene,
+        },
+        (event) => {
+          //if (BABYLON.Vector3.Distance(sphere.position, target.position) <= constants.SPAWNCONSTANTS.DIAMETER/2 + constants.BULLETCONSTANTS.DIAMETER/2) {
+            console.log("map colllision");
+          //}
+          
+        }
+    )
+  );
+  */
   
 }
 
+
+
 function spawntarget () {
-  const spawnposition = new BABYLON.Vector3(0, 400, 400);
+  var spawnposition = constants.SPAWNCONSTANTS.POSSIBLELOCATIONS[Math.floor(constants.SPAWNCONSTANTS.POSSIBLELOCATIONS.length*Math.random())] ;
 
   const sphere = BABYLON.MeshBuilder.CreateSphere("target", {diameter: constants.SPAWNCONSTANTS.DIAMETER, segments: constants.SPAWNCONSTANTS.SEGMENTS}, scene);
   sphere.position = spawnposition;
   sphere.checkCollisions = true;
   sphere._boundingInfo.boundingSphere.radius = constants.SPAWNCONSTANTS.DIAMETER/2;
   sphere._boundingInfo.boundingSphere.worldRadius = constants.SPAWNCONSTANTS.DIAMETER/2;
-  console.log(sphere._boundingInfo.boundingSphere.radius);
+  //console.log(sphere._boundingInfo.boundingSphere.radius);
   sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere, BABYLON.PhysicsImpostor.SphereImpostor, { mass: constants.SPAWNCONSTANTS.MASS, restitution: constants.SPAWNCONSTANTS.RESTITUTION}, scene);
 
   targets.push(sphere);
@@ -200,12 +269,16 @@ function spawntarget () {
 }
 
 document.addEventListener("keypress", function onEvent(event) {
-  if (event.key === " ") {
+  if (event.key == " ") {
       shoot();
   }
-  if (event.key === "Enter") {
+  if (event.key == "Enter") {
     spawntarget();
-}
+  }
+  if (event.key == "Backspace") {
+    console.log("Restarted");
+    scene = createScene();
+  }
 });
 
 

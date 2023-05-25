@@ -3,7 +3,7 @@ const CAMERACONSTANTS = {
     ELIPSOIDDIMENSIONS: new BABYLON.Vector3(20, 100, 20),
     MINZ: .45,
     SPEED: 15,
-    ANGULARSENSIBILITY: 2000,
+    ANGULARSENSIBILITY: 1000,
 
 };
 
@@ -40,6 +40,17 @@ const SPAWNCONSTANTS = {
     SEGMENTS: 32,
     MASS: 0,
     RESTITUTION: .9,
+    POSSIBLELOCATIONS: [new BABYLON.Vector3(300, 400, 400), 
+        new BABYLON.Vector3(400, 400, 400), 
+        new BABYLON.Vector3(400, 400, 0),
+        new BABYLON.Vector3(-400, 400, 0),
+        new BABYLON.Vector3(-400, 400, 300),
+        new BABYLON.Vector3(-400, 400, 400),
+        new BABYLON.Vector3(-400, 300, 400),
+        new BABYLON.Vector3(0, 400, -400),
+        new BABYLON.Vector3(0, 400, 400),
+        new BABYLON.Vector3(300, 400, -400),
+    ],
 }
 
 export default {
