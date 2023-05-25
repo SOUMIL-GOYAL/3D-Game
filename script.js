@@ -7,7 +7,7 @@ var previoustime = 0;
 var totalscore = 1000;
 var addedobservable = false;
 var targetcount = 0;
-var win = 10;
+var win = 15;
 
 console.log(constants);
 
@@ -64,6 +64,7 @@ function createScene() {
     if (evt.button === 0){
       engine.enterPointerlock();
       if (addedobservable == false) {
+        spawntarget();
         scene.onBeforeRenderObservable.add(function () {
           
           if (targetcount >= win) {
