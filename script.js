@@ -270,7 +270,8 @@ function spawntarget () {
   sphere.physicsImpostor = new BABYLON.PhysicsImpostor(sphere, BABYLON.PhysicsImpostor.SphereImpostor, { mass: constants.SPAWNCONSTANTS.MASS, restitution: constants.SPAWNCONSTANTS.RESTITUTION}, scene);
 
   var looks = new BABYLON.StandardMaterial("looks");
-  looks.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
+  looks.diffuseTexture = new BABYLON.Texture(constants.SPAWNCONSTANTS.TEXTURES[Math.floor(constants.SPAWNCONSTANTS.TEXTURES.length*Math.random())]);
+  //looks.diffuseColor = new BABYLON.Color3(Math.random(), Math.random(), Math.random());
   sphere.material = looks;
 
   targets.push(sphere);

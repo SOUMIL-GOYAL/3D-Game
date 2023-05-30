@@ -51,6 +51,12 @@ const SPAWNCONSTANTS = {
         new BABYLON.Vector3(0, 400, 400),
         new BABYLON.Vector3(300, 400, -400),
     ],
+    TEXTURES: [
+        "textures/fossilfuels.jpeg",
+        "textures/oil.jpeg",
+        "textures/factory.jpeg",
+        "textures/gas.jpeg",
+    ]
 }
 
 export default {
